@@ -1,13 +1,14 @@
 export const TEMPLATES_GENERAL = [
 	'front-page',
+	'home',
 	'archive',
 	'singular',
+	'single',
+	'single-post',
 	'index',
 	'search',
 	'404',
 ];
-
-export const TEMPLATES_POSTS = [ 'home', 'single' ];
 
 export const TEMPLATES_NEW_OPTIONS = [
 	'front-page',

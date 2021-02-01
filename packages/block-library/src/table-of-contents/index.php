@@ -279,7 +279,7 @@ function block_core_table_of_contents_render_list( $nested_heading_list ) {
 		$nested_heading_list
 	);
 
-	return '<ul>' . implode( $child_nodes ) . '</ul>';
+	return implode( $child_nodes );
 }
 
 /**
@@ -309,7 +309,7 @@ function render_block_core_table_of_contents( $attributes, $content, $block ) {
 	}
 
 	return sprintf(
-		'<nav class="%1$s">%2$s</nav>',
+		'<nav class="%1$s"><ul>%2$s</ul></nav>',
 		get_block_wrapper_attributes(),
 		block_core_table_of_contents_render_list(
 			block_core_table_of_contents_linear_to_nested_heading_list( $headings )

@@ -138,7 +138,6 @@ export default function TableOfContentsEdit( {
 							createBlock( 'core/list', {
 								values: renderToString(
 									<TableOfContentsList
-										wrapList={ false }
 										nestedHeadingList={ headingTree }
 									/>
 								),
@@ -198,7 +197,9 @@ export default function TableOfContentsEdit( {
 	return (
 		<>
 			<nav { ...blockProps }>
-				<TableOfContentsList nestedHeadingList={ headingTree } />
+				<ul>
+					<TableOfContentsList nestedHeadingList={ headingTree } />
+				</ul>
 			</nav>
 			{ toolbarControls }
 			{ inspectorControls }

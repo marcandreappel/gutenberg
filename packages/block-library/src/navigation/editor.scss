@@ -6,6 +6,7 @@
 	padding-left: 0;
 }
 
+// This is necessary for specificity of the margin items.
 .editor-styles-wrapper .wp-block-navigation .block-editor-block-list__block {
 	margin: 0;
 }

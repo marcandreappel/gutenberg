@@ -6,11 +6,12 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * External dependencies
  */
-import { flatten, slice, map, flow } from 'lodash';
+import { flatten, slice, map as _map, flow } from 'lodash';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 
-const mapC = ( f ) => ( arr ) => map( arr, f );
+// curried map operator with flipped arguments
+const map = ( mapFunction ) => ( array ) => _map( array, mapFunction );
 const toSuggestionLinkObj = ( { id, url, title, subType, type } ) => ( {
 	id,
 	url,
@@ -55,20 +56,22 @@ export default (
 		} ),
 	} );
 
+	// assign piped functions producing api call
 	const toReqBody = flow( [
 		toApiFetchBody,
 		apiFetch,
 		( promise ) => promise.catch( () => [] ),
 	] );
-	const toSuggestionLinksObjs = flow( [
+	// assign piped functions producing suggestion links objects from server response data
+	const toSuggestionLinksObjects = flow( [
 		flatten,
 		( x ) => slice( x, 0, perPage ),
 		toSuggestionLinkObj,
 	] );
-
+	// compose curried map operators to produce suggestion links objects for every type of link
 	return flow( [
-		mapC( toReqBody ),
-		mapC( async ( x ) => await x ),
-		mapC( toSuggestionLinksObjs ),
+		map( toReqBody ),
+		map( async ( x ) => await x ),
+		map( toSuggestionLinksObjects ),
 	] )( typesOfLinksToFetch );
 };

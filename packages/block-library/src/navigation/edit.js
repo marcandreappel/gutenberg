@@ -45,7 +45,6 @@ function Navigation( {
 	hasSubmenuIndicatorSetting = true,
 	hasItemJustificationControls = attributes.orientation === 'horizontal',
 	hasListViewModal = true,
-	menuName,
 } ) {
 	const navIcons = {
 		left: justifyLeft,
@@ -201,7 +200,7 @@ function Navigation( {
 					</PanelBody>
 				) }
 			</InspectorControls>
-			<nav { ...blockProps } aria-label={ menuName }>
+			<nav { ...blockProps }>
 				<ul { ...innerBlocksProps } />
 			</nav>
 		</>

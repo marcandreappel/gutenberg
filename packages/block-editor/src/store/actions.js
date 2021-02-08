@@ -546,7 +546,7 @@ export function insertBlock(
  * @param {?boolean}   updateSelection If true block selection will be updated.  If false, block selection will not change. Defaults to true.
  * @param {?Object}  meta             Optional Meta values to be passed to the action object.
  *
- *  @return {Object} Action object.
+ * @return {Object} Action object.
  */
 export function* insertBlocks(
 	blocks,

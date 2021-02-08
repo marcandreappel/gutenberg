@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { InspectorControls } from '@wordpress/block-editor';
 import {
 	BottomSheet,
 	ColorSettings,
@@ -11,7 +12,6 @@ import { withDispatch, withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import InspectorControls from '../inspector-controls';
 import styles from './container.native.scss';
 import { store as blockEditorStore } from '../../store';
 

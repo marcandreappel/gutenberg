@@ -7,7 +7,6 @@ import { noop, negate, isUndefined } from 'lodash';
  * WordPress dependencies
  */
 import { useState, useRef, useEffect } from '@wordpress/element';
-import { ENTER, ESCAPE } from '@wordpress/keycodes';
 /**
  * Internal dependencies
  */
@@ -68,14 +67,14 @@ function EditInPlaceControl( {
 						setInputCssClasses( withoutTransitionCssClass );
 					} }
 					onKeyDown={ ( event ) => {
-						if ( ENTER === event.keyCode ) {
+						if ( 'Enter' === event.key ) {
 							cancelEvent( event );
 							if ( inputValidator( value ) ) {
 								setIsEdit( false );
 								onUpdate( value );
 							}
 						}
-						if ( ESCAPE === event.keyCode ) {
+						if ( 'Escape' === event.key ) {
 							cancelEvent( event );
 							setValue( initialValue );
 							setIsEdit( false );

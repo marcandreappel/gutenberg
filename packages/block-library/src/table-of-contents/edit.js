@@ -10,6 +10,7 @@ import {
 	BlockControls,
 	BlockIcon,
 	InspectorControls,
+	store as blockEditorStore,
 	useBlockProps,
 } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
@@ -21,6 +22,7 @@ import {
 	ToolbarGroup,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { renderToString, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
@@ -55,7 +57,7 @@ export default function TableOfContentsEdit( {
 	const [ headingTree, setHeadingTree ] = useState( [] );
 
 	const postContent = useSelect(
-		( select ) => select( 'core/editor' ).getEditedPostContent(),
+		( select ) => select( editorStore ).getEditedPostContent(),
 		[]
 	);
 
@@ -72,7 +74,7 @@ export default function TableOfContentsEdit( {
 				getBlockIndex,
 				getBlockName,
 				getBlockOrder,
-			} = select( 'core/block-editor' );
+			} = select( blockEditorStore );
 
 			const blockIndex = getBlockIndex( clientId );
 			const blockOrder = getBlockOrder();
@@ -126,7 +128,7 @@ export default function TableOfContentsEdit( {
 		}
 	}, [ pageIndex, postContent, onlyIncludeCurrentPage ] );
 
-	const { replaceBlocks } = useDispatch( 'core/block-editor' );
+	const { replaceBlocks } = useDispatch( blockEditorStore );
 
 	const toolbarControls = (
 		<BlockControls>

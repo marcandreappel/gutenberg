@@ -27,11 +27,11 @@ import { __ } from '@wordpress/i18n';
  * @param {boolean} [editorSettings.disablePostFormats=false]
  * @return {Promise<Object[]>} List of suggestions
  */
-export default (
+export function fetchLinkSuggestion(
 	search,
 	{ isInitialSuggestions, type, subtype } = {},
 	{ disablePostFormats = false } = {}
-) => {
+) {
 	const perPage = isInitialSuggestions ? 3 : 20;
 
 	const linkTypes = [ 'post', 'term', 'post-format' ];
@@ -97,4 +97,4 @@ export default (
 			type: result.subtype || result.type,
 		} ) );
 	} );
-};
+}

@@ -6,18 +6,10 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * External dependencies
  */
-import { flatten, slice, map as _map, flow } from 'lodash';
+import { flatten, map } from 'lodash';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 
-// curried map operator with flipped arguments
-const map = ( mapFunction ) => ( array ) => _map( array, mapFunction );
-const toSuggestionLinkObj = ( { id, url, title, subType, type } ) => ( {
-	id,
-	url,
-	title: decodeEntities( title ) || __( '(no title)' ),
-	type: subType || type,
-} );
 /**
  * Fetches link suggestions from the API. This function is an exact copy of a function found at:
  *
@@ -42,36 +34,67 @@ export default (
 ) => {
 	const perPage = isInitialSuggestions ? 3 : 20;
 
-	const linkTypes = [ 'post', 'term' ];
-	if ( ! disablePostFormats ) linkTypes.push( 'post-format' );
+	const linkTypes = [ 'post', 'term', 'post-format' ];
 
-	const typesOfLinksToFetch = type ? [ type ] : linkTypes;
-
-	const toApiFetchBody = ( linkType ) => ( {
-		path: addQueryArgs( '/wp/v2/search', {
-			search,
-			per_page: perPage,
-			type: linkType,
-			subtype,
-		} ),
+	linkTypes.forEach( ( linkType ) => {
+		if ( ! type || type === linkType ) {
+			apiFetch( {
+				path: addQueryArgs( '/wp/v2/search', {
+					search,
+					per_page: perPage,
+					type: 'post',
+					subtype,
+				} ),
+			} ).catch( () => [] ); // fail by returning no results
+		}
 	} );
+	const queries = [];
 
-	// assign piped functions producing api call
-	const toReqBody = flow( [
-		toApiFetchBody,
-		apiFetch,
-		( promise ) => promise.catch( () => [] ),
-	] );
-	// assign piped functions producing suggestion links objects from server response data
-	const toSuggestionLinksObjects = flow( [
-		flatten,
-		( x ) => slice( x, 0, perPage ),
-		toSuggestionLinkObj,
-	] );
-	// compose curried map operators to produce suggestion links objects for every type of link
-	return flow( [
-		map( toReqBody ),
-		map( async ( x ) => await x ),
-		map( toSuggestionLinksObjects ),
-	] )( typesOfLinksToFetch );
+	if ( ! type || type === 'post' ) {
+		queries.push(
+			apiFetch( {
+				path: addQueryArgs( '/wp/v2/search', {
+					search,
+					per_page: perPage,
+					type: 'post',
+					subtype,
+				} ),
+			} ).catch( () => [] ) // fail by returning no results
+		);
+	}
+
+	if ( ! type || type === 'term' ) {
+		queries.push(
+			apiFetch( {
+				path: addQueryArgs( '/wp/v2/search', {
+					search,
+					per_page: perPage,
+					type: 'term',
+					subtype,
+				} ),
+			} ).catch( () => [] )
+		);
+	}
+
+	if ( ! disablePostFormats && ( ! type || type === 'post-format' ) ) {
+		queries.push(
+			apiFetch( {
+				path: addQueryArgs( '/wp/v2/search', {
+					search,
+					per_page: perPage,
+					type: 'post-format',
+					subtype,
+				} ),
+			} ).catch( () => [] )
+		);
+	}
+
+	return Promise.all( queries ).then( ( results ) => {
+		return map( flatten( results ).slice( 0, perPage ), ( result ) => ( {
+			id: result.id,
+			url: result.url,
+			title: decodeEntities( result.title ) || __( '(no title)' ),
+			type: result.subtype || result.type,
+		} ) );
+	} );
 };
